@@ -1,0 +1,65 @@
+name: Android APK
+
+# Builds an installable APK in the cloud and publishes it as a GitHub release,
+# so the app can be downloaded straight to a phone without a computer.
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm test
+
+      - name: Generate native Android project
+        run: npx expo prebuild --platform android --no-install
+        env:
+          CI: 1
+
+      - name: Build release APK
+        working-directory: android
+        # Release builds are signed with the debug key by the Expo template,
+        # which is fine for installing on your own phone.
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,armeabi-v7a
+
+      - name: Rename APK
+        run: cp android/app/build/outputs/apk/release/app-release.apk ShopPal-${{ github.run_number }}.apk
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-build-${{ github.run_number }}
+          name: ShopPal Android build ${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          body: |
+            Android APK built from `${{ github.ref_name }}` @ ${{ github.sha }}.
+            Open this page on your phone, download the .apk and install it
+            (allow "Install unknown apps" for your browser when asked).
+          files: ShopPal-${{ github.run_number }}.apk
