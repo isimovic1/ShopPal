@@ -27,6 +27,11 @@ function RootNavigator() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="item" options={{ title: 'Artikl', presentation: 'modal' }} />
         <Stack.Screen name="list-edit" options={{ title: 'Popis', presentation: 'modal' }} />
+        <Stack.Screen name="suggestions" options={{ title: 'Prijedlozi' }} />
+        <Stack.Screen name="bill" options={{ title: 'Račun', presentation: 'modal' }} />
+        <Stack.Screen name="bill-amount" options={{ title: 'Iznos za mjesec', presentation: 'modal' }} />
+        <Stack.Screen name="task" options={{ title: 'Posao', presentation: 'modal' }} />
+        <Stack.Screen name="meal" options={{ title: 'Jelo' }} />
       </Stack.Protected>
     </Stack>
   );

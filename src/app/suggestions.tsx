@@ -1,12 +1,12 @@
 import { Pressable, Text, View } from 'react-native';
 
-import { Card, Row, Screen, styles } from '../../components/ui';
-import { showAlert } from '../../lib/alert';
-import { addItem } from '../../lib/api';
-import { useHousehold } from '../../lib/session';
-import { dueSuggestions, frequentItems, intervalLabel } from '../../lib/suggestions';
-import type { HistoryEntry } from '../../lib/types';
-import { colors, spacing } from '../../theme';
+import { Card, Row, Screen, styles } from '../components/ui';
+import { showAlert } from '../lib/alert';
+import { addItem } from '../lib/api';
+import { useHousehold } from '../lib/session';
+import { dueSuggestions, frequentItems, intervalLabel } from '../lib/suggestions';
+import type { HistoryEntry } from '../lib/types';
+import { colors, spacing } from '../theme';
 
 export default function Suggestions() {
   const { code, me, history, items, lists, activeListId } = useHousehold();

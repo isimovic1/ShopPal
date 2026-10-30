@@ -139,9 +139,17 @@ export default function ListScreen() {
         </Pressable>
       </Row>
 
+      <Row style={{ justifyContent: 'space-between' }}>
+        <Text style={styles.label}>{due.length ? 'Možda vam treba' : ''}</Text>
+        <Pressable onPress={() => router.push('/suggestions')} hitSlop={8}>
+          <Row style={{ gap: 4 }}>
+            <Ionicons name="bulb-outline" size={15} color={colors.primary} />
+            <Text style={{ color: colors.primary, fontWeight: '600' }}>Prijedlozi ›</Text>
+          </Row>
+        </Pressable>
+      </Row>
       {due.length > 0 && (
         <View style={{ gap: 6 }}>
-          <Text style={[styles.label]}>Možda vam treba</Text>
           <Row style={{ flexWrap: 'wrap', gap: 6 }}>
             {due.map((s) => (
               <Pressable

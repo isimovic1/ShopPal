@@ -28,7 +28,8 @@ function init() {
     auth.setPersistence(browserLocalPersistence).catch(() => {});
   }
   // React Native's fetch has no streaming, so let Firestore fall back to long polling when needed.
-  db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true });
+  // Optional fields (note, link, amount…) are simply left out instead of failing the write.
+  db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true, ignoreUndefinedProperties: true });
 }
 
 export function firebaseAuth(): Auth {

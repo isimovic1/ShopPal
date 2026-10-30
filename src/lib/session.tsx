@@ -3,9 +3,9 @@ import { onAuthStateChanged, signInAnonymously } from 'firebase/auth';
 import { onSnapshot, orderBy, query } from 'firebase/firestore';
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
-import { historyCol, householdRef, itemsCol, listsCol, Me } from './api';
+import { billMonthsCol, billsCol, historyCol, householdRef, itemsCol, listsCol, mealsCol, Me, tasksCol } from './api';
 import { firebaseAuth } from './firebase';
-import type { HistoryEntry, Household, Item, ShoppingList } from './types';
+import type { Bill, BillMonth, HistoryEntry, Household, Item, Meal, ShoppingList, Task } from './types';
 
 const PROFILE_KEY = 'shoppal:profile:v1';
 const ACTIVE_LIST_KEY = 'shoppal:activeList:v1';
@@ -25,6 +25,10 @@ interface Session {
   lists: ShoppingList[];
   items: Item[];
   history: HistoryEntry[];
+  bills: Bill[];
+  billMonths: BillMonth[];
+  tasks: Task[];
+  meals: Meal[];
   error: string | null;
   activeListId: string | null;
   setActiveListId: (id: string) => void;
@@ -42,6 +46,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [lists, setLists] = useState<ShoppingList[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [bills, setBills] = useState<Bill[]>([]);
+  const [billMonths, setBillMonths] = useState<BillMonth[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [meals, setMeals] = useState<Meal[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [activeListId, setActiveListIdState] = useState<string | null>(null);
 
@@ -90,6 +98,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       setLists([]);
       setItems([]);
       setHistory([]);
+      setBills([]);
+      setBillMonths([]);
+      setTasks([]);
+      setMeals([]);
       return;
     }
     const fail = (e: Error) => setError(`Sinkronizacija nije uspjela: ${e.message}`);
@@ -118,6 +130,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       onSnapshot(historyCol(code), (snap) => {
         setHistory(snap.docs.map((d) => ({ key: d.id, ...(d.data() as Omit<HistoryEntry, 'key'>) })));
       }, fail),
+      onSnapshot(billsCol(code), (snap) => setBills(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Bill, 'id'>) }))), fail),
+      onSnapshot(
+        billMonthsCol(code),
+        (snap) => setBillMonths(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<BillMonth, 'id'>) }))),
+        fail,
+      ),
+      onSnapshot(tasksCol(code), (snap) => setTasks(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Task, 'id'>) }))), fail),
+      onSnapshot(mealsCol(code), (snap) => setMeals(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Meal, 'id'>) }))), fail),
     ];
     return () => unsubs.forEach((u) => u());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,12 +160,19 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       lists,
       items,
       history,
+      bills,
+      billMonths,
+      tasks,
+      meals,
       error,
       activeListId,
       setActiveListId,
       saveProfile,
     }),
-    [authReady, profileLoaded, uid, profile, me, household, lists, items, history, error, activeListId, setActiveListId, saveProfile],
+    [
+      authReady, profileLoaded, uid, profile, me, household, lists, items, history, bills, billMonths, tasks, meals, error,
+      activeListId, setActiveListId, saveProfile,
+    ],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
