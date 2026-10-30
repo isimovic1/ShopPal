@@ -1,12 +1,13 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, Card, Field, Screen, styles } from '../components/ui';
+import { showAlert } from '../lib/alert';
 import { addList, deleteList, renameList } from '../lib/api';
 import { useHousehold } from '../lib/session';
 
-const report = (e: unknown) => Alert.alert('Greška', e instanceof Error ? e.message : String(e));
+const report = (e: unknown) => showAlert('Greška', e instanceof Error ? e.message : String(e));
 
 export default function ListEdit() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -15,7 +16,7 @@ export default function ListEdit() {
   const [name, setName] = useState(existing?.name ?? '');
 
   const save = async () => {
-    if (!name.trim()) return Alert.alert('Naziv', 'Upiši naziv popisa, npr. "Lidl" ili "dm".');
+    if (!name.trim()) return showAlert('Naziv', 'Upiši naziv popisa, npr. "Lidl" ili "dm".');
     try {
       if (existing) await renameList(code, existing.id, name.trim());
       else {
@@ -30,9 +31,9 @@ export default function ListEdit() {
 
   const remove = () => {
     if (!existing) return;
-    if (lists.length <= 1) return Alert.alert('Nije moguće', 'Mora ostati barem jedan popis.');
+    if (lists.length <= 1) return showAlert('Nije moguće', 'Mora ostati barem jedan popis.');
     const count = items.filter((i) => i.listId === existing.id).length;
-    Alert.alert('Obrisati popis?', count ? `Obrisat će se i ${count} artikala na njemu.` : existing.name, [
+    showAlert('Obrisati popis?', count ? `Obrisat će se i ${count} artikala na njemu.` : existing.name, [
       { text: 'Odustani', style: 'cancel' },
       {
         text: 'Obriši',

@@ -21,11 +21,19 @@
       "package": "com.shoppal.app"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "name": "ShopPal",
+      "shortName": "ShopPal",
+      "themeColor": "#6D28D9",
+      "backgroundColor": "#F3F5F9",
+      "output": "single"
     },
     "plugins": [
       "expo-router"
     ],
-    "scheme": "shoppal"
+    "scheme": "shoppal",
+    "experiments": {
+      "baseUrl": "/ShopPal"
+    }
   }
 }

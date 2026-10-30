@@ -1,6 +1,7 @@
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Card, Row, Screen, styles } from '../../components/ui';
+import { showAlert } from '../../lib/alert';
 import { addItem } from '../../lib/api';
 import { useHousehold } from '../../lib/session';
 import { dueSuggestions, frequentItems, intervalLabel } from '../../lib/suggestions';
@@ -17,7 +18,7 @@ export default function Suggestions() {
 
   const add = (h: HistoryEntry) => {
     if (!activeListId) return;
-    addItem(code, activeListId, h.name, me, h.category).catch((e) => Alert.alert('Greška', String(e)));
+    addItem(code, activeListId, h.name, me, h.category).catch((e) => showAlert('Greška', String(e)));
   };
 
   return (

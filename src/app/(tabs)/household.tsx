@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, Share, Text, View } from 'react-native';
+import { Pressable, Share, Text, View } from 'react-native';
 
 import { Button, Card, Field, Row, Screen, styles } from '../../components/ui';
+import { showAlert } from '../../lib/alert';
 import { leaveHousehold, renameMember } from '../../lib/api';
 import { useHousehold } from '../../lib/session';
 import { colors, spacing } from '../../theme';
 
-const report = (e: unknown) => Alert.alert('Greška', e instanceof Error ? e.message : String(e));
+const report = (e: unknown) => showAlert('Greška', e instanceof Error ? e.message : String(e));
 
 export default function HouseholdScreen() {
   const { code, me, household, lists, profile, saveProfile } = useHousehold();
@@ -30,7 +31,7 @@ export default function HouseholdScreen() {
   };
 
   const leave = () =>
-    Alert.alert('Napustiti kućanstvo?', 'Popisi ostaju drugima. Vratiti se možeš opet s istim kodom.', [
+    showAlert('Napustiti kućanstvo?', 'Popisi ostaju drugima. Vratiti se možeš opet s istim kodom.', [
       { text: 'Odustani', style: 'cancel' },
       {
         text: 'Napusti',

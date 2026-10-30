@@ -1,10 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, useNavigation } from 'expo-router';
 import { useLayoutEffect, useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
+import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 
 import { ItemRow } from '../../components/ItemRow';
 import { Button, Row, Screen, styles } from '../../components/ui';
+import { showAlert } from '../../lib/alert';
 import { addItem, clearDone, setItemDone, setShopping } from '../../lib/api';
 import { CATEGORIES } from '../../lib/household';
 import { useHousehold } from '../../lib/session';
@@ -12,7 +13,7 @@ import { dueSuggestions } from '../../lib/suggestions';
 import type { Item } from '../../lib/types';
 import { colors, spacing } from '../../theme';
 
-const report = (e: unknown) => Alert.alert('Greška', e instanceof Error ? e.message : String(e));
+const report = (e: unknown) => showAlert('Greška', e instanceof Error ? e.message : String(e));
 
 export default function ListScreen() {
   const { code, me, household, lists, items, history, activeListId, setActiveListId, error } = useHousehold();

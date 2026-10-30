@@ -1,8 +1,9 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 import { Button, Card, Field, Screen, styles } from '../components/ui';
+import { showAlert } from '../lib/alert';
 import { deleteItem, updateItem } from '../lib/api';
 import { CATEGORIES } from '../lib/household';
 import { useHousehold } from '../lib/session';
@@ -26,16 +27,16 @@ export default function ItemScreen() {
   }
 
   const save = () => {
-    if (!name.trim()) return Alert.alert('Naziv', 'Upiši naziv artikla.');
+    if (!name.trim()) return showAlert('Naziv', 'Upiši naziv artikla.');
     updateItem(code, item.id, { name: name.trim(), note: note.trim(), category, listId })
       .then(() => router.back())
-      .catch((e) => Alert.alert('Greška', String(e)));
+      .catch((e) => showAlert('Greška', String(e)));
   };
 
   const remove = () =>
     deleteItem(code, item.id)
       .then(() => router.back())
-      .catch((e) => Alert.alert('Greška', String(e)));
+      .catch((e) => showAlert('Greška', String(e)));
 
   return (
     <Screen>

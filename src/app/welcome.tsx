@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button, Card, Field, KeyboardAware, styles } from '../components/ui';
+import { showAlert } from '../lib/alert';
 import { createHousehold, joinHousehold } from '../lib/api';
 import { CODE_LENGTH, cleanCode, isValidCode } from '../lib/household';
 import { useSession } from '../lib/session';
@@ -15,18 +16,18 @@ export default function Welcome() {
   const [busy, setBusy] = useState(false);
 
   const run = async (action: 'create' | 'join') => {
-    if (!uid) return Alert.alert('Nema veze', error ?? 'Prijava još nije gotova. Provjeri internet i pokušaj ponovo.');
-    if (!name.trim()) return Alert.alert('Ime', 'Upiši svoje ime, da drugi vidi tko je što dodao.');
+    if (!uid) return showAlert('Nema veze', error ?? 'Prijava još nije gotova. Provjeri internet i pokušaj ponovo.');
+    if (!name.trim()) return showAlert('Ime', 'Upiši svoje ime, da drugi vidi tko je što dodao.');
     const me = { uid, name: name.trim() };
     if (action === 'join' && !isValidCode(cleanCode(code))) {
-      return Alert.alert('Kod', `Kod ima ${CODE_LENGTH} znakova, npr. K7P2QX.`);
+      return showAlert('Kod', `Kod ima ${CODE_LENGTH} znakova, npr. K7P2QX.`);
     }
     setBusy(true);
     try {
       const householdCode = action === 'create' ? await createHousehold(me) : await joinHousehold(code, me);
       await saveProfile({ name: me.name, code: householdCode });
     } catch (e) {
-      Alert.alert('Nije uspjelo', e instanceof Error ? e.message : String(e));
+      showAlert('Nije uspjelo', e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
     }
